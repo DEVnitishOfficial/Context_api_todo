@@ -147,3 +147,92 @@ function TodoList ({ list, updateList }) {
 }
 ```
 
+Next Goal : Introducing Context api
+
+**Problem : As we can see here there is a lot of props and state we have to maintain like we have to send the props from parent to child and from child to parent using callbacks which is very problematic and cumbersome to maintian such type of code. To solve this problem we have context api.**
+
+* Context is working like a parent component in which we pass all the props as a child.
+
+* suppose we make a context component and we wrap our App component inside that context then anytime and anywhere we can access the props, there is no need to prop drilling from one component to another component because all component are running throught the App component.
+
+* There will be direct acces of all the props in every component.
+
+Implementation : 
+
+1. At first we have created a context folder inside the components and create a file TodoContext.js and inside this file we have imported the react createContext.
+
+```js
+import { createContext } from "react";
+export default createContext(null);
+```
+* createContext helps us in creating the parent component;
+
+* so using the createContext we can create any context and it provide a provider method using
+which we can provide the context value.
+
+* we wrapped our app component with context provider and provide the state value.
+
+```js
+<TodoContext.Provider value={{list, setList}}> 
+    <AddTodo updateList={(todo) => setList([
+      ...list, 
+      {
+        id: list.length+1, 
+        todoData : todo, 
+        finished:false
+      }
+    ])}/>
+    <TodoList />
+    </TodoContext.Provider>
+```
+
+* After providing the context to our <App /> component we use the useContext from react using which we extract the props from the context like below one : 
+
+```js
+const {list, setList} = useContext(TodoContext)
+```
+* Now we not need to pass prop manually from each component but there is still problems of call backs that we use to pass the prop from child to parent component, see below the problem of callbacks
+
+```js
+function TodoList () {
+  const {list, setList} = useContext(TodoContext)
+  console.log('list>>>',list);
+  return (
+    <div>
+      {list.length > 0 &&
+        list.map(todo => (
+          <Todo
+            key={todo.id}
+            todoData={todo.todoData}
+            isFinished={todo.finished}
+            id={todo.id}
+            changeFinished={isFinished => {
+              const updatedList = list.map(t => {
+                if (t.id == todo.id) {
+                  todo.finished = isFinished
+                }
+                return t
+              })
+              setList(updatedList)
+            }}
+            onDelete={() => {
+              const updatedList = list.filter((t) => t.id != todo.id)
+              setList(updatedList);
+            }}
+            onEdit={(todoData) => {
+              const updatedList = list.map(t => {
+                if(t.id == todo.id){
+                  t.todoData = todoData
+                }
+                return t
+              })
+              setList(updatedList);
+            }}
+          />
+        ))}
+    </div>
+  )
+}
+```
+
+Now we will solve this using the Reducers concept.
