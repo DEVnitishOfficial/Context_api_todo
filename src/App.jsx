@@ -12,7 +12,6 @@ function App() {
   return (
     
     <>
-    <TodoList list={list}/>
     <AddTodo updateList={(todo) => setList([
       ...list, 
       {
@@ -20,7 +19,8 @@ function App() {
         todoData : todo, 
         finished:false
       }
-      ])}/>
+    ])}/>
+    <TodoList list={list} updateList={setList}/>
     </>
   )
 }

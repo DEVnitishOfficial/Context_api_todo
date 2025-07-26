@@ -100,3 +100,50 @@ function AddTodo ({updateList}) {
 }
 ```
 
+# Next Goal -----> update the todo
+
+* Now we want to update the todo basically i want to mark is any specific todo is done or not.
+
+* For this first i have checked if on checked any value chaged or not by below code 
+```js  
+<input type='checkbox' onChange={(e) => console.log(e.target.checked)}/>
+```
+* Now in order to track which todo is updated or not we need an id property in todo so we pass and id property in todo from the todoList from where we are rendering the Todo component.
+
+* To track each todo check unchecked property we also need to maintian the state so we use useState.like below one, but still we have to propogate the value from <Todo/> componenet to the <App> component where our todo list exist i.e here we have to propogate the value from the child to the parent for this we use callbacks
+
+* From parent to child send property through ---->> props
+* From child to parent send property through ---->> callbacks 
+
+* So here we have to pass a callback to the <TodoList /> component which will get the update of any todo.
+
+* Also <TodoList /> get props of updateList from the app.jsx 
+* In <TodoList /> component we pass a prop of changeFinished inside the <Todo/> component, inside changeFinished we pass a parameter named isFinished which is nothing but the check unchecked done by user i.e (e.target.checked);
+
+```js
+function TodoList ({ list, updateList }) {
+  return (
+    <div>
+      {list.length > 0 &&
+        list.map(todo => (
+          <Todo
+            key={todo.id}
+            todoData={todo.todoData}
+            isFinished={todo.finished}
+            id={todo.id}
+            changeFinished={isFinished => {
+              const updatedList = list.map(t => {
+                if (t.id == todo.id) {
+                  todo.finished = isFinished
+                }
+                return t
+              })
+              updateList(updatedList)
+            }}
+          />
+        ))}
+    </div>
+  )
+}
+```
+
