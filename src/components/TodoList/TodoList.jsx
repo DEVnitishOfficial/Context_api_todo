@@ -3,8 +3,33 @@ import Todo from '../Todo/Todo'
 import TodoContext from '../context/TodoContext'
 
 function TodoList () {
-  const {list, setList} = useContext(TodoContext)
-  console.log('list>>>',list);
+  const { list, setList } = useContext(TodoContext)
+
+  function onFinished (todo, isFinished) {
+    const updatedList = list.map(t => {
+      if (t.id == todo.id) {
+        todo.finished = isFinished
+      }
+      return t
+    })
+    setList(updatedList)
+  }
+
+  function deleteTodo (todo) {
+    const updatedList = list.filter(t => t.id != todo.id)
+    setList(updatedList)
+  }
+
+  function updateTodo (todo, todoData) {
+    const updatedList = list.map(t => {
+      if (t.id == todo.id) {
+        t.todoData = todoData
+      }
+      return t
+    })
+    setList(updatedList)
+  }
+
   return (
     <div>
       {list.length > 0 &&
@@ -14,28 +39,9 @@ function TodoList () {
             todoData={todo.todoData}
             isFinished={todo.finished}
             id={todo.id}
-            changeFinished={isFinished => {
-              const updatedList = list.map(t => {
-                if (t.id == todo.id) {
-                  todo.finished = isFinished
-                }
-                return t
-              })
-              setList(updatedList)
-            }}
-            onDelete={() => {
-              const updatedList = list.filter((t) => t.id != todo.id)
-              setList(updatedList);
-            }}
-            onEdit={(todoData) => {
-              const updatedList = list.map(t => {
-                if(t.id == todo.id){
-                  t.todoData = todoData
-                }
-                return t
-              })
-              setList(updatedList);
-            }}
+            changeFinished={(isFinished) => onFinished(todo, isFinished)}
+            onDelete={() => deleteTodo(todo)}
+            onEdit={(todoData) => updateTodo(todo, todoData)}
           />
         ))}
     </div>
